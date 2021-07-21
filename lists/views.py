@@ -1,5 +1,5 @@
-from django.http.request import HttpRequest
+from django.http import HttpRequest, HttpResponse
 
 
-def home_page(request: HttpRequest) -> None:
-    pass
+def home_page(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("<html><title>To-Do lists</title></html>")
