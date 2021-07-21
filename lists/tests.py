@@ -15,10 +15,10 @@ class HomePageTest(TestCase):
         html = response.content.decode("utf8")
         self.assertTrue(html.startswith("<html>"))
         self.assertIn("<title>To-Do lists</title>", html)
-        self.assertTrue(html.endswith("</html>"))
+        self.assertTrue(html.strip().endswith("</html>"))
 
         self.assertTemplateUsed(response, "lists/home.html")
 
     def test_uses_home_template(self) -> None:
-        response = self.clientget("/")
+        response = self.client.get("/")
         self.assertTemplateUsed(response, "lists/home.html")
