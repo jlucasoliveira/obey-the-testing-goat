@@ -25,7 +25,7 @@ class NewVisitorTest(unittest.TestCase):
             "Enter a to-do item",
         )
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(secs=1)
+        time.sleep(1)
 
         table = self.browser.find_element_by_id("id_list_table")
         rows = table.find_elements_by_tag_name("tr")
