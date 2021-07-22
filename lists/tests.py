@@ -10,6 +10,10 @@ class HomePageTest(TestCase):
         found = resolve("/")
         self.assertEqual(found.func, home_page)
 
+    def test_only_saves_items_when_necessary(self) -> None:
+        self.client.get("/")
+        self.assertEqual(Item.objects.count(), 0)
+
     def test_home_page_returns_correct_html(self) -> None:
         response = self.client.get("/")
 
@@ -25,9 +29,24 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, "lists/home.html")
 
     def test_can_save_a_POST_request(self) -> None:
+        self.client.post("/", data={"item_text": "A new list item"})
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, "A new list item")
+
+    def test_redirects_after_POST(self) -> None:
         response = self.client.post("/", data={"item_text": "A new list item"})
-        self.assertIn("A new list item", response.content.decode("utf8"))
-        self.assertTemplateUsed(response, "lists/home.html")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["location"], "/")
+
+    def test_displays_all_list_items(self) -> None:
+        Item.objects.create(text="itemey 1")
+        Item.objects.create(text="itemey 2")
+
+        response = self.client.get("/")
+
+        self.assertIn("itemey 1", response.content.decode("utf8"))
+        self.assertIn("itemey 2", response.content.decode("utf8"))
 
 
 class ItemModelTest(TestCase):
